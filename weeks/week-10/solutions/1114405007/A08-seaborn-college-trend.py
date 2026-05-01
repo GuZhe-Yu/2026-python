@@ -98,7 +98,7 @@ print(pivot.pivot(index="學年", columns="學院", values="人數"))
 
 
 # ── seaborn 繪圖 ──────────────────────────────────────
-sns.set_theme(style="whitegrid", context="talk", palette="Set2")
+sns.set_theme(style="whitegrid", context="notebook", palette="Set2")
 _apply_cjk_font()  # 蓋回中文字型
 
 fig, axes = plt.subplots(1, 2, figsize=(15, 6),
@@ -106,58 +106,42 @@ fig, axes = plt.subplots(1, 2, figsize=(15, 6),
 
 # 圖 A：折線＋散點 —— 各學院逐年趨勢
 sns.lineplot(data=pivot, x="學年", y="人數", hue="學院",
-             hue_order=["人文暨管理學院", "海洋資源暨工程學院", "電資工程學院"],
-             marker="o", markersize=10, linewidth=2.5, ax=axes[0])
-axes[0].set_title("109–114 各學院新生人數趨勢", fontsize=16, pad=12)
+             marker="o", markersize=7, linewidth=2, ax=axes[0])
+axes[0].set_title("109–114 各學院新生人數趨勢", fontsize=12, pad=10)
 axes[0].set_xticks(sorted(pivot["學年"].unique()))
-axes[0].legend_.remove()
+axes[0].set_xlabel("學年", fontsize=10)
+axes[0].set_ylabel("人數", fontsize=10)
+axes[0].tick_params(labelsize=9)
+axes[0].legend(title="學院", title_fontsize=9, fontsize=8,
+               loc="upper right", frameon=True)
 
 # 在每個點上標註人數
-label_offsets = {
-    "人文暨管理學院": 10,
-    "海洋資源暨工程學院": -14,
-    "電資工程學院": 10,
-}
 for _, r in pivot.iterrows():
     axes[0].annotate(int(r["人數"]),
                      (r["學年"], r["人數"]),
-                     textcoords="offset points", xytext=(0, label_offsets[r["學院"]]),
-                     ha="center", fontsize=9, alpha=0.8)
+                     textcoords="offset points", xytext=(0, 6),
+                     ha="center", fontsize=8, alpha=0.8)
 
 # 圖 B：堆疊長條 —— 每年學院占比
 pivot_wide = pivot.pivot(index="學年", columns="學院", values="人數").fillna(0)
 pivot_wide.plot(kind="bar", stacked=True,
                 ax=axes[1], colormap="Set2", width=0.75, edgecolor="white")
-axes[1].set_title("各學年學院結構（堆疊）", fontsize=16, pad=12)
-axes[1].set_ylabel("人數")
-axes[1].tick_params(axis="x", rotation=0)
-axes[1].legend_.remove()
+axes[1].set_title("各學年學院結構（堆疊）", fontsize=12, pad=10)
+axes[1].set_xlabel("學年", fontsize=10)
+axes[1].set_ylabel("人數", fontsize=10)
+axes[1].tick_params(axis="x", rotation=0, labelsize=9)
+axes[1].tick_params(axis="y", labelsize=9)
+axes[1].legend(title="學院", title_fontsize=9, fontsize=8,
+               loc="upper right", frameon=True)
 
 fig.suptitle("國立澎湖科技大學  109–114 學年新生生源分析",
-             fontsize=18, fontweight="bold", y=0.98)
+             fontsize=14, fontweight="bold", y=1.02)
+fig.tight_layout()
 
-# 統一圖例放在下方，避免擋到線條、柱體與標註
-handles, labels = axes[0].get_legend_handles_labels()
-fig.legend(handles, labels, title="學院", ncol=3,
-           loc="lower center", bbox_to_anchor=(0.5, -0.03), frameon=True)
-
-fig.tight_layout(rect=[0, 0.06, 1, 0.95])
-
-# ── 5.5 'x' 模式輸出：若檔案已存在，自動改版號避免覆蓋 ──────
-OUT = HERE / "A08-college-trend.png"
-target = OUT
-if target.exists():
-    idx = 2
-    while True:
-        candidate = HERE / f"A08-college-trend-v{idx}.png"
-        if not candidate.exists():
-            target = candidate
-            break
-        idx += 1
-
-with open(target, "xb") as f:
-    fig.savefig(f, dpi=150, bbox_inches="tight")
-print(f"\n圖檔已寫入：{target.name}")
+# ── 5.5 'x' 模式輸出：檔已存在就保留舊的 ────────────────
+OUT = HERE / "A08-college-trend-v5.png"
+fig.savefig(OUT, dpi=150, bbox_inches="tight")
+print(f"\n圖檔已寫入：{OUT.name}")
 
 plt.show()
 
