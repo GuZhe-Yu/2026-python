@@ -32,8 +32,10 @@ def main():
     ax.legend(loc="upper right", bbox_to_anchor=(1.25, 1.0))
 
     os.makedirs("assets", exist_ok=True)
-    fig.savefig("assets/radar.png", bbox_inches="tight")
-    plt.close(fig)
+    try:
+        fig.savefig("assets/radar.png", bbox_inches="tight")
+    finally:
+        plt.close(fig)
 
 
 if __name__ == "__main__":

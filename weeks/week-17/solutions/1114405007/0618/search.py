@@ -6,6 +6,10 @@ def linear_search(data: list, target) -> int:
 
 
 def binary_search(data: list, target) -> int:
+    if data is None:
+        raise TypeError("data must not be None")
+    if target is None:
+        raise TypeError("target must not be None")
     left, right = 0, len(data) - 1
     while left <= right:
         mid = (left + right) // 2
