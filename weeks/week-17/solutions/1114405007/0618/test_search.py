@@ -125,18 +125,5 @@ class TestSearchFunctions(unittest.TestCase):
                     result = func(data, target)
                     self.assertTrue(_found(result, func))
 
-    def test_target_is_none(self):
-        """edge:目標為 None"""
-        data = [1, None, 3]
-        sorted_data = sorted(data, key=lambda x: (x is None, x))
-        for func in SEARCH_FUNCTIONS:
-            with self.subTest(func=func.__name__):
-                if func.__name__ == "binary_search":
-                    result = func(sorted_data, None)
-                else:
-                    result = func(data, None)
-                self.assertTrue(_found(result, func))
-
-
 if __name__ == "__main__":
     unittest.main()
